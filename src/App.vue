@@ -25,7 +25,7 @@
         </Tooltip>
 
         <Popover>
-            <UiBtn class="bordered">Show dropdown</UiBtn>
+            <UiBtn class="md:bordered">Show dropdown</UiBtn>
             <PopoverContent class="shadow mt-2">This is a popover</PopoverContent>
         </Popover>
     </div>
