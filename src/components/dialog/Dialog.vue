@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { DefaultOptions } from 'winduum/src/components/dialog/types/index.d.ts'
     import { ref } from 'vue'
-    import { showDialog, closeDialog } from 'winduum/src/components/dialog/index.js'
+    import type { DefaultOptions } from "winduum/src/components/dialog"
+    import { showDialog, closeDialog } from 'winduum/src/components/dialog'
 
     const root = ref()
     const open = ref(false)
@@ -11,8 +11,8 @@
         requestAnimationFrame(() => showDialog(root.value, options))
     }
 
-    const close = async () => {
-        await closeDialog(root.value)
+    const close = async (options: DefaultOptions) => {
+        await closeDialog(root.value, options)
         open.value = false
     }
 
