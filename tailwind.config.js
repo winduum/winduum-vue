@@ -1,4 +1,4 @@
-import winduum from 'winduum/plugin/tailwind.js'
+import winduum from 'winduum/plugin'
 
 export default {
     darkMode: 'class',
