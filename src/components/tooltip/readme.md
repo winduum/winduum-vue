@@ -1,34 +1,5 @@
-# [Dialog](https://winduum.dev/docs/components/tooltip.html)
+# [Tooltip](https://winduum.dev/docs/components/tooltip.html)
 
 ## Installation
-```shell
-npm i winduum
-```
-
-You can copy and paste the components in this directory to your project.
-
-Include CSS either globally or to your component _([you can't use TailwindCSS layers in per-component CSS](https://tailwindcss.com/docs/adding-custom-styles#layers-and-per-component-css))_
-
-```css
-@import "winduum/src/components/tooltip/index.css" layer(components);
-```
-
-or modular (you can use your own props or CSS)
-
-```css
-@import "winduum/src/components/tooltip/default.css" layer(components);
-@import "winduum/src/components/tooltip/default-props.css" layer(components);
-```
-
-
-### Local imports
-By default, imports are directly from `npm` so you can leverage updates.
-You can also copy and paste the code from [source](https://github.com/winduum/winduum/blob/main/src/components/dialog) to your project and remap the imports to local.
-
-```css
-@import "@/components/tooltip/assets/index.css" layer(components);
-```
-
-### Docs
-
-Visit [docs](https://winduum.dev/docs/components/tooltip.html) to learn more about usage examples.
+You can copy and paste the components in this directory to your own project.
+Follow the installation instruction at [winduum/winduum](https://github.com/winduum/winduum/tree/main/src/components/tooltip)
