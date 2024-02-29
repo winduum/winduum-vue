@@ -7,3 +7,12 @@
 # 🎨 [Winduum Vue](https://winduum.dev)
 
 Ready to use components for Vue
+
+## Dependencies
+
+```json
+{
+  "winduum": "^1",
+  "vue": "^3"
+}
+```
