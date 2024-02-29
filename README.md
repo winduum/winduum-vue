@@ -6,7 +6,7 @@
 
 # 🎨 [Winduum Vue](https://winduum.dev)
 
-Ready to use components for Vue
+Ready to use components for Vue - [src/components](https://github.com/winduum/winduum-vue/tree/main/src/components)
 
 ## Dependencies
 
