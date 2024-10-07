@@ -12,7 +12,7 @@ Ready to use components for Vue - [src/components](https://github.com/winduum/wi
 
 ```json
 {
-  "winduum": "^1",
+  "winduum": "^2",
   "vue": "^3"
 }
 ```
