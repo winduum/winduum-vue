@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-tooltip" :is="as">
+    <component class="x-tooltip" :is="as">
         <slot></slot>
     </component>
 </template>

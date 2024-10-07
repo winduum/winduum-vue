@@ -23,7 +23,7 @@
 </script>
 
 <template>
-    <dialog class="c-dialog" v-if="open" ref="root" @c-dialog:dismiss="open = false">
+    <dialog class="x-dialog" v-if="open" ref="root" @x-dialog:dismiss="open = false">
         <slot :close="close"></slot>
     </dialog>
 </template>

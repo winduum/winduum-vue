@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-field" :is="as">
+    <component class="x-field" :is="as">
         <slot></slot>
     </component>
 </template>

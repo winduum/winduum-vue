@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-dialog-content" :is="as">
+    <component class="x-dialog-content" :is="as">
         <slot></slot>
     </component>
 </template>

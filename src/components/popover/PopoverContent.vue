@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-popover-content" :is="as">
+    <component class="x-popover-content" :is="as">
         <slot></slot>
     </component>
 </template>

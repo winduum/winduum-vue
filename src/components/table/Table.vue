@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-table" :is="as">
+    <component class="x-table" :is="as">
         <slot></slot>
     </component>
 </template>

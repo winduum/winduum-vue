@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="c-breadcrumb" :is="as" aria-label="breadcrumb">
+    <component class="x-breadcrumb" :is="as" aria-label="breadcrumb">
         <slot></slot>
     </component>
 </template>
