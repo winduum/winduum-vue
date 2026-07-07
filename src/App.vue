@@ -1,41 +1,27 @@
 <script setup lang="ts">
-    import { ref, nextTick } from 'vue'
+    import { useId } from 'vue'
     import { Button } from './components/button'
     import DialogMain from './playground/dialog/main.vue'
     import { Tooltip } from "./components/tooltip"
     import { Popover, PopoverContent } from "./components/popover"
 
-    const dialogMain = ref()
-    const dialogMainProps = ref({})
-
-    const showDialog = async () => {
-        dialogMainProps.value = {
-            heading: 'Hello there',
-            name: 'haha'
-        }
-
-        await nextTick()
-
-        dialogMain.value.root.show({
-            closable: true
-        })
-
-    }
+    const dialogMain = useId()
+    const popoverMain = useId()
 </script>
 
 <template>
-    <div class="flex-center p-6">
-        <Tooltip class="bottom" aria-label="Opens a dialog">
-            <Button class="muted" @click="showDialog">Open Dialog</Button>
+    <div class="flex items-center gap-2 p-6">
+        <Tooltip class="tooltip-bottom" aria-label="Opens a dialog">
+            <Button class="muted" command="show-modal" :commandfor="dialogMain">Open Dialog</Button>
         </Tooltip>
 
-        <Popover class="trigger-focus">
-            <Button class="md:bordered">Show dropdown</Button>
-            <PopoverContent class="shadow mt-2">This is a popover</PopoverContent>
+        <Button class="md:bordered" command="toggle-popover" :commandfor="popoverMain" :aria-controls="popoverMain">Show dropdown</Button>
+        <Popover class="bottom my-2" popover :id="popoverMain">
+            <PopoverContent class="shadow p-2">This is a popover</PopoverContent>
         </Popover>
     </div>
 
     <Teleport to="body">
-        <DialogMain ref="dialogMain" v-bind="dialogMainProps" :key="dialogMainProps" />
+        <DialogMain :id="dialogMain" heading="Hello there" name="haha" />
     </Teleport>
 </template>
