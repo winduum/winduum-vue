@@ -1,14 +1,12 @@
 <script setup lang="ts">
     import { onMounted, onUnmounted, ref } from 'vue'
-
-    type PopoverOptions = boolean | Record<string, unknown>
-    const supportsAnchor = CSS.supports('anchor-name', '--')
-    const supportsAnchoredContainer = CSS.supports('container-type: anchored')
+    import { supportsAnchor, supportsAnchoredContainer } from 'winduum/src/common.js'
+    import type { ComputePositionConfig, Placement } from '@floating-ui/dom'
 
     interface Props {
         as?: string
-        autoUpdate?: PopoverOptions
-        placement?: string
+        autoUpdate?: boolean | ComputePositionConfig
+        placement?: Placement
     }
 
     const props = withDefaults(defineProps<Props>(), {
@@ -17,14 +15,14 @@
     })
 
     const element = ref<HTMLElement>()
-    let open = false
     let cleanup: (() => void) | undefined
     let sourceElement: HTMLElement | undefined
 
-    const onToggle = ((event: ToggleEvent) => {
-        open = event.newState === 'open'
+    const nativeShowPopover = HTMLElement.prototype.showPopover as (this: HTMLElement, options?: { source?: HTMLElement }) => void
+    const nativeHidePopover = HTMLElement.prototype.hidePopover
 
-        if (sourceElement?.ariaExpanded) sourceElement.ariaExpanded = `${open}`
+    const onToggle = ((event: ToggleEvent) => {
+        if (sourceElement?.ariaExpanded) sourceElement.ariaExpanded = `${event.newState === 'open'}`
     }) as EventListener
 
     const showPopover = async (options?: { source?: HTMLElement }) => {
@@ -38,25 +36,23 @@
         if (source && ((props.autoUpdate && !supportsAnchoredContainer) || !supportsAnchor)) {
             const { autoUpdatePopover } = await import('winduum/src/components/popover/index.js')
 
-            cleanup = await autoUpdatePopover(source, popoverElement, props.placement as never, props.autoUpdate as never)
+            cleanup = await autoUpdatePopover(source, popoverElement, props.placement, props.autoUpdate)
         }
 
-        ;(HTMLElement.prototype.showPopover as (this: HTMLElement, options?: { source?: HTMLElement }) => void).call(popoverElement, options)
+        nativeShowPopover.call(popoverElement, options)
     }
 
     const hidePopover = () => {
         cleanup?.()
         cleanup = undefined
 
-        if (!element.value) return
-
-        ;(HTMLElement.prototype.hidePopover as (this: HTMLElement) => void).call(element.value)
+        if (element.value) nativeHidePopover.call(element.value)
     }
 
     const togglePopover = (options?: { source?: HTMLElement }) => {
-        !open
-            ? void showPopover(options)
-            : hidePopover()
+        element.value?.matches(':popover-open')
+            ? hidePopover()
+            : void showPopover(options)
     }
 
     onMounted(() => {
@@ -64,21 +60,11 @@
 
         if (!popoverElement) return
 
-        ;(popoverElement as any).showPopover = showPopover
-        ;(popoverElement as any).hidePopover = hidePopover
-        ;(popoverElement as any).togglePopover = togglePopover
+        Object.assign(popoverElement, { showPopover, hidePopover, togglePopover })
         popoverElement.addEventListener('toggle', onToggle)
     })
 
-    onUnmounted(() => {
-        if (!element.value) return
-
-        cleanup?.()
-        element.value.removeEventListener('toggle', onToggle)
-        delete (element.value as Partial<HTMLElement>).showPopover
-        delete (element.value as Partial<HTMLElement>).hidePopover
-        delete (element.value as Partial<HTMLElement>).togglePopover
-    })
+    onUnmounted(() => cleanup?.())
 </script>
 
 <template>
