@@ -4,12 +4,12 @@
     }
 
     withDefaults(defineProps<Props>(), {
-        as: 'progress'
+        as: 'div'
     })
 </script>
 
 <template>
-    <component class="x-progress" :is="as">
+    <component class="x-group" :is="as">
         <slot></slot>
     </component>
 </template>
