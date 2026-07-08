@@ -7,17 +7,13 @@
         validateOptions?: ValidateFieldOptions
     }
 
-    const props = withDefaults(defineProps<Props>(), {
+    withDefaults(defineProps<Props>(), {
         as: 'div'
     })
-
-    const validate = ({ currentTarget }: Event) => {
-        validateField(currentTarget as HTMLElement, props.validateOptions)
-    }
 </script>
 
 <template>
-    <component class="x-field" :is="as" @change="validate">
+    <component class="x-field" :is="as" @change="validateField($event.currentTarget as HTMLElement, validateOptions)">
         <slot></slot>
     </component>
 </template>

@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <component class="x-drawer-content" :is="as" data-x-drawer-part="content">
+    <component class="x-drawer-content" :is="as">
         <slot></slot>
     </component>
 </template>

@@ -1,45 +1,50 @@
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue'
-    import type { SetValueOptions } from 'winduum/src/components/range'
-    import { setValue, setOutputValue } from 'winduum/src/components/range'
+    import type { ComponentPublicInstance } from 'vue'
+    import { computed, watch } from 'vue'
+
+    type ElementRef = ComponentPublicInstance | HTMLInputElement | null
 
     interface Props {
         as?: string
+        refs?: {
+            startElement?: ElementRef
+            endElement?: ElementRef
+        }
     }
 
-    withDefaults(defineProps<Props>(), {
+    const props = withDefaults(defineProps<Props>(), {
         as: 'div'
     })
 
-    const element = ref<HTMLElement>()
+    const startElement = computed(() => (props.refs?.startElement as ComponentPublicInstance)?.$el ?? props.refs?.startElement)
+    const endElement = computed(() => (props.refs?.endElement as ComponentPublicInstance)?.$el ?? props.refs?.endElement)
 
-    const getTrack = (input: HTMLInputElement): SetValueOptions['track'] => {
-        const track = input.dataset.track ?? input.dataset.xRangePart ?? input.dataset.xRangeTarget
+    const setValue = async ({ currentTarget }: { currentTarget: EventTarget | null }) => {
+        const target = currentTarget
 
-        return track === 'end' ? 'end' : 'start'
-    }
-
-    const setRangeValue = (target: EventTarget | null) => {
         if (!(target instanceof HTMLInputElement) || target.type !== 'range') return
 
-        setValue(target, {
-            track: getTrack(target)
-        })
+        const track = target === endElement.value ? 'end' : 'start'
+        const { setValue, setOutputValue } = await import('winduum/src/components/range')
+
+        setValue(target, { track })
 
         const outputElement = document.getElementById(target.getAttribute('aria-labelledby') ?? '')
 
         if (outputElement) setOutputValue(target, outputElement)
     }
 
-    onMounted(() => {
-        element.value?.querySelectorAll<HTMLInputElement>('input[type="range"]').forEach((input) => {
-            setRangeValue(input)
-        })
+    watch(startElement, (element) => {
+        if (element) void setValue({ currentTarget: element })
+    })
+
+    watch(endElement, (element) => {
+        if (element) void setValue({ currentTarget: element })
     })
 </script>
 
 <template>
-    <component class="x-range" :is="as" ref="element" @input="setRangeValue($event.target)">
-        <slot></slot>
+    <component class="x-range" :is="as">
+        <slot :setValue="setValue"></slot>
     </component>
 </template>

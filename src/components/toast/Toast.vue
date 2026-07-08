@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { onMounted, onUnmounted, ref } from 'vue'
     import type { CloseToastOptions, ShowToastOptions } from 'winduum/src/components/toast'
-    import { closeToast, showToast } from 'winduum/src/components/toast'
 
     interface Props {
         as?: string
@@ -25,6 +24,8 @@
 
         window.clearTimeout(timeout)
 
+        const { closeToast } = await import('winduum/src/components/toast')
+
         await closeToast(element.value, {
             ...props.showOptions?.close,
             ...props.closeOptions,
@@ -38,6 +39,8 @@
         if (!element.value) return
 
         const autoHide = props.showOptions?.autoHide ?? 7500
+
+        const { showToast } = await import('winduum/src/components/toast')
 
         await showToast(element.value, {
             ...props.showOptions,
@@ -53,11 +56,7 @@
         window.clearTimeout(timeout)
     })
 
-    const onClick = (event: MouseEvent) => {
-        if ((event.target as HTMLElement).closest('[data-action="closeToast"]')) {
-            void close()
-        }
-    }
+    defineExpose({ close })
 </script>
 
 <template>
@@ -68,8 +67,7 @@
         role="status"
         aria-live="assertive"
         aria-atomic="true"
-        @click="onClick"
     >
-        <slot></slot>
+        <slot :close="close"></slot>
     </component>
 </template>

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-    import { onMounted, onUnmounted, ref } from 'vue'
+    import type { ComponentPublicInstance } from 'vue'
+    import { computed, onWatcherCleanup, ref, watch } from 'vue'
     import type { DrawerPlacement } from 'winduum/src/components/drawer'
-    import { drawerEvents, drawerObserver, showDrawer } from 'winduum/src/components/drawer'
+
+    type ElementRef = ComponentPublicInstance | HTMLElement | null
 
     interface Props {
         placement?: DrawerPlacement
         modal?: boolean
+        refs?: {
+            contentElement?: ElementRef
+        }
     }
 
     const props = withDefaults(defineProps<Props>(), {
@@ -14,11 +19,9 @@
     })
 
     const element = ref<HTMLDialogElement>()
+    const contentElement = computed(() => (props.refs?.contentElement as ComponentPublicInstance)?.$el ?? props.refs?.contentElement)
 
-    let abortController: AbortController | undefined
-    let observer: IntersectionObserver | undefined
-
-    const showModal = () => {
+    const showModal = async () => {
         const drawerElement = element.value
         const scrollerElement = drawerElement?.firstElementChild
 
@@ -27,29 +30,35 @@
         if (props.modal) HTMLDialogElement.prototype.showModal.call(drawerElement)
         else HTMLDialogElement.prototype.show.call(drawerElement)
 
+        const { showDrawer } = await import('winduum/src/components/drawer')
+
         void showDrawer(scrollerElement, props.placement)
     }
 
-    onMounted(() => {
+    watch(contentElement, (contentElement) => {
         const drawerElement = element.value
-        const contentElement = drawerElement?.querySelector<HTMLElement>('[data-x-drawer-part="content"], .x-drawer-content')
 
         if (!drawerElement || !contentElement) return
 
-        abortController = new AbortController()
+        const abortController = new AbortController()
+        let observer: IntersectionObserver | undefined
+
         drawerElement.showModal = showModal
 
-        drawerEvents(drawerElement, contentElement, props.placement, abortController.signal)
+        void import('winduum/src/components/drawer').then(({ drawerEvents, drawerObserver }) => {
+            if (abortController.signal.aborted) return
 
-        observer = drawerObserver(drawerElement, props.placement)
-        observer?.observe(contentElement)
-    })
+            drawerEvents(drawerElement, contentElement, props.placement, abortController.signal)
 
-    onUnmounted(() => {
-        if (element.value) delete (element.value as Partial<HTMLDialogElement>).showModal
+            observer = drawerObserver(drawerElement, props.placement)
+            observer.observe(contentElement)
+        })
 
-        abortController?.abort()
-        observer?.disconnect()
+        onWatcherCleanup(() => {
+            delete (drawerElement as Partial<HTMLDialogElement>).showModal
+            abortController.abort()
+            observer?.disconnect()
+        })
     })
 </script>
 

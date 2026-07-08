@@ -1,31 +1,38 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    import { toggleTab } from 'winduum/src/components/tabs'
+    import type { ComponentPublicInstance } from 'vue'
+    import { computed } from 'vue'
+
+    type ElementRef = ComponentPublicInstance | HTMLElement | null
 
     interface Props {
         as?: string
+        refs?: {
+            tabElements?: ElementRef[]
+            tabPanelElements?: ElementRef[]
+        }
     }
 
-    withDefaults(defineProps<Props>(), {
+    const props = withDefaults(defineProps<Props>(), {
         as: 'div'
     })
 
-    const element = ref<HTMLElement>()
+    const unwrapElement = (ref: ElementRef) => ((ref as ComponentPublicInstance)?.$el ?? ref) as Element | null
+    const tabElements = computed(() => props.refs?.tabElements?.map(unwrapElement).filter((element): element is Element => !!element) ?? [])
+    const tabPanelElements = computed(() => props.refs?.tabPanelElements?.map(unwrapElement).filter((element): element is Element => !!element) ?? [])
 
-    const toggle = (event: MouseEvent) => {
-        const tabElement = (event.target as HTMLElement).closest('[role="tab"]')
+    const toggleTab = async (event: Event) => {
+        const source = event.currentTarget as HTMLElement
+        const { toggleTab } = await import('winduum/src/components/tabs')
 
-        if (!tabElement || !element.value?.contains(tabElement)) return
-
-        toggleTab(tabElement, {
-            tabElements: element.value.querySelectorAll('[role="tab"]'),
-            tabPanelElements: element.value.querySelectorAll('[role="tabpanel"]')
+        toggleTab(source, {
+            tabElements: tabElements.value,
+            tabPanelElements: tabPanelElements.value
         })
     }
 </script>
 
 <template>
-    <component class="x-tabs" :is="as" ref="element" @click="toggle">
-        <slot></slot>
+    <component class="x-tabs" :is="as">
+        <slot :toggleTab="toggleTab"></slot>
     </component>
 </template>

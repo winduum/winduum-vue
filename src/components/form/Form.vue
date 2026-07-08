@@ -6,15 +6,11 @@
         validateOptions?: ValidateFormOptions
     }
 
-    const props = defineProps<Props>()
-
-    const validate = (event: SubmitEvent) => {
-        validateForm(event, props.validateOptions)
-    }
+    defineProps<Props>()
 </script>
 
 <template>
-    <form class="x-form" novalidate @submit="validate">
+    <form class="x-form" novalidate @submit="validateForm($event as SubmitEvent, validateOptions)">
         <slot></slot>
     </form>
 </template>
