@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { onMounted, onUnmounted, ref } from 'vue'
+    import { onCommand } from '../../index.js'
     import { supportsAnchor, supportsAnchoredContainer } from 'winduum/src/common.js'
     import type { ComputePositionConfig, Placement } from '@floating-ui/dom'
 
@@ -15,6 +16,7 @@
     })
 
     const element = ref<HTMLElement>()
+    let abortController: AbortController | undefined
     let cleanup: (() => void) | undefined
     let sourceElement: HTMLElement | undefined
 
@@ -60,11 +62,17 @@
 
         if (!popoverElement) return
 
+        abortController = new AbortController()
+
         Object.assign(popoverElement, { showPopover, hidePopover, togglePopover })
-        popoverElement.addEventListener('toggle', onToggle)
+        popoverElement.addEventListener('toggle', onToggle, { signal: abortController.signal })
+        popoverElement.addEventListener('command', onCommand, { signal: abortController.signal })
     })
 
-    onUnmounted(() => cleanup?.())
+    onUnmounted(() => {
+        cleanup?.()
+        abortController?.abort()
+    })
 </script>
 
 <template>

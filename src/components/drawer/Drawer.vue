@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import type { ComponentPublicInstance } from 'vue'
     import { computed, onWatcherCleanup, ref, watch } from 'vue'
+    import { onCommand } from '../../index.js'
     import type { DrawerPlacement } from 'winduum/src/components/drawer'
 
     type ElementRef = ComponentPublicInstance | HTMLElement | null
@@ -44,6 +45,7 @@
         let observer: IntersectionObserver | undefined
 
         drawerElement.showModal = showModal
+        drawerElement.addEventListener('command', onCommand, { signal: abortController.signal })
 
         void import('winduum/src/components/drawer').then(({ drawerEvents, drawerObserver }) => {
             if (abortController.signal.aborted) return
