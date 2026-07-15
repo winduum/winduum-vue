@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import type { ValidateFieldOptions } from 'winduum/src/components/form'
-    import { validateField } from 'winduum/src/components/form'
+    import type { ValidateFieldOptions } from 'winduum/src/components/field'
+    import { validateField } from 'winduum/src/components/field'
 
     interface Props {
         as?: string
