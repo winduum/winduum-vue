@@ -5,7 +5,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "publish-next": "npm publish --tag next"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.7.6",
+    "vue": "^3.5.39",
+    "winduum": "^3.0.0-next.16"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.2",
@@ -13,9 +19,14 @@
     "tailwindcss": "^4.3.2",
     "typescript": "^5.9.3",
     "vite": "^8.1.3",
-    "vue": "^3.5.39",
-    "vue-tsc": "^3.3.6",
-    "winduum": "^3.0.0-next.16"
+    "vue-tsc": "^3.3.6"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./src/*": "./src/*"
   },
   "engines": {
     "node": ">=20.19.0",
@@ -24,8 +35,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/winduum/winduum-vue.git"
-  },
-  "dependencies": {
-    "@floating-ui/dom": "^1.7.6"
   }
 }
