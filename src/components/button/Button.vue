@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import { showRipple } from 'winduum/src/utilities/ripple/index.js'
-
     interface Props {
         as?: string
     }
@@ -8,6 +6,12 @@
     withDefaults(defineProps<Props>(), {
         as: 'button'
     })
+
+    const showRipple = async ({ currentTarget, offsetX, offsetY }: MouseEvent) => {
+        const { showRipple } = await import('winduum/src/utilities/ripple/index.js')
+
+        showRipple({ currentTarget: currentTarget ?? undefined, offsetX, offsetY })
+    }
 </script>
 
 <template>
